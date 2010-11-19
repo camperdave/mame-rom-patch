@@ -7,9 +7,10 @@ default_base = "/home/ieeestudent/Downloads/MAME/fix/"
 default_dir = "/home/ieeestudent/Downloads/MAME/fix"
 
 def parse_report(report_filename, patch_filename, output_dir):
+	file_to_find = os.path.basename(patch_filename)
+	print "About to process " + file_to_find
 	with open(report_filename, 'r') as report:
 		lines = report.readlines()
-		file_to_find = os.path.basename(patch_filename)
 		for (index, line) in enumerate(lines):
 			if (line.find(file_to_find) != -1):
 				i = index
@@ -31,9 +32,15 @@ argc = len(sys.argv)
 
 if(argc == 2):
 	to_process = os.path.join(default_base, sys.argv[1])
-	print "About to patch for " + to_process
 	parse_report(default_report, to_process, default_dir)
 	print "Done!"
+	
+if(argc == 3):
+	if(sys.argv[1] == "-d"):
+		print "Looking in directory: " + sys.argv[2]
+		for root, dirs, files in os.walk(sys.argv[2]):
+			for name in files:
+				parse_report(default_report, os.path.join(root, name), default_dir)
 	 
 elif(argc == 4):
 	parse_report(sys.argv[1], sys.argv[2], sys.argv[3])
